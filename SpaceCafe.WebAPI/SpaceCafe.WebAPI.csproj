@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f6694b73-fd7a-40af-8fed-91787ed2a18b</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SpaceCafe.Application\SpaceCafe.Application.csproj" />
+    <ProjectReference Include="..\SpaceCafe.Contracts\SpaceCafe.Contracts.csproj" />
+    <ProjectReference Include="..\SpaceCafe.Infrastructure\SpaceCafe.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
