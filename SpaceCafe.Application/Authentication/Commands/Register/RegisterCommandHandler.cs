@@ -14,7 +14,8 @@ public class RegisterCommandHandler(IJwtTokenGenerator _jwtTokenGenerator, IUser
     public async Task<OneOf<AuthenticationResult, DuplicateEmailError, CustomException>> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         //1.Validate the user doesn't exist
-        if (_userRepository.GetUserByEmail(command.Email) is not null)
+        var existingUser = await _userRepository.GetUserByEmail(command.Email); // await eklenmeli
+        if (existingUser is not null)
         {
             return new DuplicateEmailError();
         }
@@ -27,7 +28,7 @@ public class RegisterCommandHandler(IJwtTokenGenerator _jwtTokenGenerator, IUser
             Password = command.Password,
         };
 
-        _userRepository.Add(user);
+        await _userRepository.Add(user);
 
 
         //3.Generate JWT token

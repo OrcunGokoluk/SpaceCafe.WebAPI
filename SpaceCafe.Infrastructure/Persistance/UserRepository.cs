@@ -5,13 +5,16 @@ namespace SpaceCafe.Infrastructure.Persistance;
 public class UserRepository : IUserRepository
 {
     private static readonly List<User> _users = new();
-    public void Add(User user)
+
+    public Task Add(User user)
     {
         _users.Add(user);
+        return Task.CompletedTask; // Hızlı bir işlem olduğu için sadece Task.CompletedTask döndürüyoruz.
     }
 
-    public User? GetUserByEmail(string email)
+    public Task<User?> GetUserByEmail(string email)
     {
-        return _users.SingleOrDefault(u => u.Email == email);
+        var user = _users.SingleOrDefault(u => u.Email == email);
+        return Task.FromResult(user);
     }
 }

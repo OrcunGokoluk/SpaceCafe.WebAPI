@@ -29,7 +29,7 @@ public class AuthenticationController(ISender _mediator) : Controller
         return authResult.Match(
             authResult => Ok(MapAuthResult(authResult)),
             errors => Problem(statusCode: StatusCodes.Status409Conflict, title: "I dunno"),
-             customException => Problem(title: customException.Title, detail: customException.Message, statusCode: customException.StatusCode)
+             customException => Problem(title: customException.Title, detail: customException.CustomMessage, statusCode: customException.StatusCode)
             );
 
     }
@@ -48,7 +48,7 @@ public class AuthenticationController(ISender _mediator) : Controller
         return authResult.Match(
             authResult => Ok(MapAuthResult(authResult)),
             errors => Problem(statusCode: StatusCodes.Status409Conflict, title: "I dunno"),
-            customException => Problem(title: customException.Title, detail: customException.Message, statusCode: customException.StatusCode)
+            customException => Problem(title: customException.Title, detail: customException.CustomMessage, statusCode: customException.StatusCode)
             );
 
     }
