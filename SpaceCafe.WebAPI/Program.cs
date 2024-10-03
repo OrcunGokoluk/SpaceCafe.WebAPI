@@ -13,12 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
         };
     });
 
+    builder.Services.AddPresentation()
+                    .AddApplication()
+                    .AddInfrastructure(builder.Configuration);
 
-
-    builder.Services.AddApplication();
-
-
-    builder.Services.AddInfrastructure(builder.Configuration);
 
 
     builder.Services.AddControllers();

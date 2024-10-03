@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OneOf;
 using SpaceCafe.Application.Authentication.Commands.Register;
@@ -11,23 +12,28 @@ namespace SpaceCafe.WebAPI.Controllers;
 
 [ApiController]
 [Route("auth")]
-public class AuthenticationController(ISender _mediator) : Controller
+public class AuthenticationController(ISender _mediator, IMapper _mapper) : Controller
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
+        _mapper = new Mapper();
 
-        var command = new RegisterCommand(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.Password);
+        var command = _mapper.Map<RegisterCommand>(request);
+
+        //artık manuel mapping yerine yukarıdaki mapping'i yaptık
+
+        //var command = new RegisterCommand(
+        //    request.FirstName,
+        //    request.LastName,
+        //    request.Email,
+        //    request.Password);
 
         OneOf<AuthenticationResult, DuplicateEmailError, CustomException> authResult = await _mediator.Send(command);
 
 
         return authResult.Match(
-            authResult => Ok(MapAuthResult(authResult)),
+            authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
             errors => Problem(statusCode: StatusCodes.Status409Conflict, title: "I dunno"),
              customException => Problem(title: customException.Title, detail: customException.CustomMessage, statusCode: customException.StatusCode)
             );
@@ -39,35 +45,20 @@ public class AuthenticationController(ISender _mediator) : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var command = new LoginQuery(
-            request.Email,
-            request.Password);
+        var query = _mapper.Map<LoginQuery>(request);
 
-        OneOf<AuthenticationResult, DuplicateEmailError, CustomException> authResult = await _mediator.Send(command);
+        //var query = new LoginQuery(
+        //    request.Email,
+        //    request.Password);
+
+        OneOf<AuthenticationResult, DuplicateEmailError, CustomException> authResult = await _mediator.Send(query);
 
         return authResult.Match(
-            authResult => Ok(MapAuthResult(authResult)),
+            authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
             errors => Problem(statusCode: StatusCodes.Status409Conflict, title: "I dunno"),
             customException => Problem(title: customException.Title, detail: customException.CustomMessage, statusCode: customException.StatusCode)
             );
 
     }
-
-    private static AuthenticationResponse MapAuthResult(AuthenticationResult authservice)
-    {
-        var response = new AuthenticationResponse
-                        (
-                            authservice.user.Id,
-                            authservice.user.FirstName,
-                            authservice.user.LastName,
-                            authservice.user.Email,
-                            //autservice.Id,
-                            //autservice.FirstName,
-                            //autservice.LastName,
-                            //autservice.Email,
-                            authservice.Token);
-        return response;
-    }
-
-
 }
+
