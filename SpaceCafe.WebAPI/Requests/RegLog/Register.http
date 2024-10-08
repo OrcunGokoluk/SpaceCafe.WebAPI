@@ -4,7 +4,7 @@ POST https://localhost:7263/auth/register
 Content-Type: application/json
 
 {
-    "FirstName": "Orcun",
+    "FirstName": " ",
     "LastName": "Gokoluk",
     "Email": "orcungokoluk@gmail.com",
     "Password": "og1"

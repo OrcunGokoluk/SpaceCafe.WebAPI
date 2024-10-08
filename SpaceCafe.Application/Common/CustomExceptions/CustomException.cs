@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace SpaceCafe.Application.Common.CustomException;
+namespace SpaceCafe.Application.Common.CustomExceptions;
 public class CustomException : Exception
 {
     public int StatusCode { get; }
