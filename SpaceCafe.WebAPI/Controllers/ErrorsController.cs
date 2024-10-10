@@ -1,8 +1,7 @@
-﻿
-using FluentValidation;
-//using System.ComponentModel.DataAnnotations;----->bunu sakın kullanma bu farklı ValidationException
+﻿//using System.ComponentModel.DataAnnotations;----->bunu sakın kullanma bu farklı ValidationException
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SpaceCafe.Application.Common.CustomExceptions;
 
 namespace SpaceCafe.WebAPI.Controllers;
@@ -16,12 +15,31 @@ public class ErrorController : ControllerBase
         var context = HttpContext.Features.Get<IExceptionHandlerFeature>();//
         var exception = context?.Error;
 
+        if (exception is CustomValidationException validationException)
+        {
+            var modelState = new ModelStateDictionary();
+
+            // Hataları ModelState içine ekle
+            foreach (var error in validationException.Errors)
+            {
+                modelState.AddModelError(error.Key, error.Value);
+            }
+
+            var problemDetails = new ValidationProblemDetails(modelState)
+            {
+                Title = "Bad Request",
+                Status = StatusCodes.Status400BadRequest
+            };
+
+            return BadRequest(problemDetails);
+        }
+        /*
         if (exception is ValidationException validationException)
         {
             return Problem(
                 detail: validationException.Message,
                 statusCode: StatusCodes.Status400BadRequest);
-        }
+        }*/
 
         else if (exception is DuplicateEmailError duplicateEmailException)
         {
